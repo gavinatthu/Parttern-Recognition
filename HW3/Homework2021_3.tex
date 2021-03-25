@@ -1,0 +1,214 @@
+\documentclass{article}
+\usepackage{mathrsfs}
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{comment}
+%\include{macros}
+%\usepackage{floatflt}
+%\usepackage{graphics}
+%\usepackage{epsfig}
+
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem*{defition}{Definition}
+\newtheorem*{example}{Example}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{note}{Note}
+\newtheorem*{exercise}{Exercise}
+
+\setlength{\oddsidemargin}{-0.25 in}
+\setlength{\evensidemargin}{-0.25 in} \setlength{\topmargin}{-0.25
+in} \setlength{\textwidth}{7 in} \setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.25 in} \setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+\newcommand{\homework}[5]{
+\pagestyle{myheadings} \thispagestyle{plain}
+\newpage
+\setcounter{page}{1} \setcounter{section}{#5} \noindent
+\begin{center}
+\framebox{ \vbox{\vspace{2mm} \hbox to 6.28in { {\bf
+THU-70250043-0,~Pattern~Recognition~(Spring 2021) \hfill Homework: 3} }
+\vspace{6mm} \hbox to 6.28in { {\Large \hfill #1 \hfill} }
+\vspace{6mm} \hbox to 6.28in { {\it Lecturer: #2 \hfill} }
+\vspace{2mm} \hbox to 6.28in { {\it \hspace{13mm} #3 \hfill} }
+\vspace{2mm} \hbox to 6.28in { {\it Student: #4 \hfill} }
+\vspace{2mm} } }
+\end{center}
+\markboth{#1}{#1} \vspace*{4mm} }
+
+
+\begin{document}
+
+\homework{EM and GMM}{Changshui Zhang
+\hspace{5mm} {\tt zcs@mail.tsinghua.edu.cn}}{Hong Zhao
+\hspace{15.5mm} {\tt vzhao@tsinghua.edu.cn}}{ \hspace{5mm} {\tt
+ } }{8}
+
+\section*{EM and GD}
+In this problem you will see connections between the EM algorithm and gradient descent. 
+Consider a GMM with known mixture weight $\pi_k$ and spherical covariances (but the radius of spheres might be different).
+It's log likelihood is given by
+\[
+l\left(\{\mu_k,\sigma_k^2\}_{k=1}^K\right) = \sum_{i=1}^n\log\left(\sum_{k=1}^K\pi_k~N(x_i|\mu_k,\sigma_k^2I)\right).
+\]
+A maximization algorithm based on gradient descent should be something like:
+\begin{itemize}
+	\item Initialize $\mu_k$ and $\sigma_k^2$, $k \in \{1,\cdots ,K\}$. Set the iteration counter $t\leftarrow1$.
+	\item Repeat the following until convergence:
+	\begin{itemize}
+		\item For $k=1,\cdots ,K$,
+		\[
+		\mu_k^{(t+1)}\leftarrow\mu_k^{(t)}+\eta_k^{(t)}\triangledown_{\mu_k}l\left(\{\mu_k^{(t)},(\sigma_k ^2)^{(t)}\}_{k=1}^K\right)
+		\]
+		\item For $k=1,\cdots ,K$,
+		\[
+		(\sigma_k ^2)^{(t+1)} \leftarrow (\sigma_k ^2)^{(t)}+s_k^{(t)}\triangledown_{\sigma_k^2}l\left(\{\mu_k^{(t+1)},(\sigma_k ^2)^{(t)}\}_{k=1}^K\right)
+		\]
+		\item Increase the iteration counter $t\leftarrow t+1$
+	\end{itemize}
+\end{itemize}
+Please \textbf{prove} that with properly chosen step size $\eta_k^{(t)}$ and $s_k^{(t)}$, the above gradient descent algorithm is essentially equivalent to the following \emph{modified} EM algorithm:
+\begin{itemize}
+	\item Initialize $\mu_k$ and $\sigma_k^2$, $k \in \{1,\cdots ,K\}$. Set the iteration counter $t\leftarrow1$.
+	\item Repeat the following until convergence:
+	\begin{itemize}
+		\item E-step:
+		\[
+		\tilde{z}_{ik}^{(t+0.5)} \leftarrow Prob\left(x_i\in cluster_k | \{(\mu_j^{(t)},(\sigma_j^2)^{(t)})\}_{j=1}^K,x_i\right),
+		\]
+		\item M-step:
+		\[
+		\{\mu_k^{(t+1)}\}_{k=1}^K \leftarrow arg\max_{\{\mu_k\}_{k=1}^K} \sum_{i=1}^n\sum_{k=1}^K \tilde{z}_{ik}^{(t+0.5)} \left(\log~N(x_i|\mu_k,(\sigma_k^2)^{(t)}I)+\log\pi_k\right)
+		\]
+		\item E-step:
+		\[
+		\tilde{z}_{ik}^{(t+1)} \leftarrow Prob\left(x_i \in cluster_k|\{(\mu_j^{(t+1)},(\sigma_j^2)^{(t)})\}_{j=1}^K,x_i\right),
+		\]
+		\item M-step:
+		\[
+		\{(\sigma_k^2)^{(t+1)}\}_{k=1}^K \leftarrow arg \max_{\{\sigma_k\}_{k=1}^K} \sum_{i=1}^n \sum_{k=1}^K \tilde{z}_{ik}^{(t+1)} \left(\log~N(x_i|\mu_k^{(t+1)},\sigma_k^2 I)+\log \pi_k \right)
+		\]
+		\item Increase the iteration counter $t\leftarrow t+1$
+	\end{itemize}
+\end{itemize}
+The main modification is inserting an extra E-step between the M-step for $\mu_k$'s and the M-step for $\sigma_k^2$'s.
+
+\emph{Hint:} Find the exact algebraic form of step size $\eta_k^{(t)}$ and $s_k^{(t)}$ from M-step.
+
+\section*{EM for MAP Estimation}
+The EM algorithm that we talked about in class was for solving a maximum likelihood estimation problem in which we wished to maximize
+\begin{equation}
+  \prod_{i = 1}^mp(x^{(i)};\theta) = \prod_{i = 1}^m \sum_{z^{(i)}}p(x^{(i)},z^{(i)};\theta)
+\end{equation}
+where $x^{(i)}$ were visible variables, $z^{(i)}$ were hidden variables and $m$ was the number of samples. Suppose we are working in a Bayesian framework, and wanted to find the MAP estimate of the parameters $\theta$ by maximizing
+\begin{equation}
+  (\prod_{i = 1}^mp(x^{(i)};\theta))p(\theta) = (\prod_{i = 1}^m \sum_{z^{(i)}}p(x^{(i)},z^{(i)}|\theta))p(\theta)
+\end{equation}
+Here, $p(\theta)$ is our prior on the parameters. Please \textbf{generalize the EM algorithm} to work for MAP
+estimation. You may assume that $log\;p(x,z|\theta)$ and $log\;p(\theta)$ are both concave in $\theta$, so
+that the M-step is tractable if it requires only maximizing a linear combination of these
+quantities. (This roughly corresponds to assuming that MAP estimation is tractable when
+$x, z$ is fully observed, just like in the frequentist case where we considered examples in
+which maximum likelihood estimation was easy if $x, z$ was fully observed.)
+
+Make sure your M-step is tractable, and also \textbf{prove} that $(\prod_{i = 1}^mp(x^{(i)};\theta))p(\theta)$ (viewed as a
+function of $\theta$) monotonically increases with each iteration of your algorithm.
+
+\section*{Programming 1 (EM and GMM)}
+
+Consider the case that the hidden variable $y \in \{1, ..., m\}$ is discrete while the visible variable $x \in R^d$ is continuous. In other words, we consider mixture models of the form
+\begin{equation}
+	p(x) = \sum_{j = 1}^m p(x|y = j)p(y=j)
+\end{equation}
+We assume throughout that $x$ is conditionally Gaussian in the sense that $x \sim \mathcal{N}(\mu_j
+, \Sigma_j)$ when $y = j$. We have provided you with an example EM code for mixture of Gaussians (with visualization) in \emph{Matlab}.
+The command to run is:
+
+$[\text{param},\text{history},\text{ll}] = \text{em}\_\text{mix}(\text{data,m,eps})$;
+
+where the input points are given as rows of $data$, $m$ is the number of components in the
+estimated mixture, and $eps$ determines the stopping criteria of EM: the algorithm stops
+when the relative change in log-likelihood falls below $eps$. In the output, $param$ is a cell
+array with $m$ elements. Each element is a structure with the following fields:
+
+mean - the resulting mean of the Gaussian component,
+
+cov - the resulting covariance matrix of the component,
+
+p - the resulting estimate of the mixing parameter.
+
+The value of $param$ is updated after every iteration of EM; the output argument $history$
+contains copies of these subsequent values of $param$ and allows to analyze our experiments.
+Finally, $ll$ is the vector where the t-th element is the value of the log-likelihood of the $data$
+after $t$ iterations (i.e. the last element is the final log-likelihood of the fitted mixture of
+Gaussians).
+
+\begin{itemize}
+	\item Run the EM algorithm based on $data$ provided by \texttt{emdata.mat} with m =
+	2, 3, 4, 5 components. Select the appropriate model (number of components) and give reasons for your choice. Note that you may have to rerun the algorithm a few times
+	(and select the model with the highest log-likelihood) for each choice of m as EM can
+	sometimes get stuck in a local minimum. Is the model selection result sensible based
+	on what you would expect visually? Why or why not?
+	\item Modify the M-step of the EM code so that the covariance matrices of
+	the Gaussian components are constrained to be equal. Give detailed derivation. Rerun the code and then select a appropriate model. Would we select a different number of components in this case?
+	%Rerun the model selection
+	%problem using BIC as the selection criterion. Would we select a different number of
+	%components in this case?
+	
+\end{itemize}
+\emph{Hint:} For the above two questions you are encouraged to google ``BIC(Bayesian Information Criterion)'' to help you with the model selection process. Of course other criteria are welcomed as long as you give convincing reasons.
+
+\emph{Hint:} For this assignment, you are allowed to implement EM algorithm manually in python, and you can use scipy.io.loadmat to load the data.
+
+\section*{Programming 2 (Missing Data)}
+\begin{center}
+	\begin{tabular}{|c|ccc|}
+		\hline
+		&  &  $\omega_1$ & \\
+		point & $x_1$ & $x_2$ & $x_3$ \\
+		\hline
+		1 & 0.42 & -0.087 & 0.58\\
+		2 & -0.2 & -3.3 & -3.4\\
+		3 & 1.3 & -0.32 & 1.7\\
+		4 & 0.39 & 0.71 & 0.23\\
+		5 & -1.6 & -5.3 & -0.15\\
+		6 & -0.029 & 0.89 & -4.7\\
+		7 & -0.23 & 1.9 & 2.2\\
+		8 & 0.27 & -0.3 & -0.87\\
+		9 & -1.9 & 0.76 & -2.1\\
+		10 & 0.87 & -1.0 & -2.6 \\
+		\hline
+	\end{tabular}
+\end{center}
+Suppose we know that the ten data points in category $\omega_1$ in the table above come from a three-dimensional Gaussian. Suppose, however, that we do not have access to the $x_3$ components for the even-numbered data points.
+
+1. Write an EM program to estimate the mean and covariance of the distribution. Start your estimate with $\pmb{\mu}^0=0$ and $\pmb{\Sigma}^0 = $ \textbf{I}, the three-dimensional identity matrix.
+
+2. Compare your final estimation with the case when we remove all even-numbered data points (2, 4, 6, 8, 10).
+
+3. Compare your final estimation with the case when there are no missing data, namely we have access to all $x_3$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Reference
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{thebibliography}{1}
+
+%\bibitem{BoydVandenberghe2004}
+%S. Boyd and L. Vandenberghe, \emph{Convex Optimization}, Cambridge
+%University Press, 2004.
+
+%\end{thebibliography}
+\end{document}

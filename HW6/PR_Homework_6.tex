@@ -1,0 +1,152 @@
+\documentclass{article}
+\usepackage{mathrsfs}
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{comment}
+\usepackage{url}
+%\include{macros}
+%\usepackage{floatflt}
+%\usepackage{graphics}
+%\usepackage{epsfig}
+
+% \usepackage{changes}
+% \definechangesauthor[name={Per cusse}, color=orange]{per}
+% 	\setremarkmarkup{(#2)}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem*{defition}{Definition}
+\newtheorem*{example}{Example}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{note}{Note}
+\newtheorem*{exercise}{Exercise}
+
+\setlength{\oddsidemargin}{-0.25 in}
+\setlength{\evensidemargin}{-0.25 in} \setlength{\topmargin}{-0.25
+in} \setlength{\textwidth}{7 in} \setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.25 in} \setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+\newcommand{\homework}[5]{
+\pagestyle{myheadings} \thispagestyle{plain}
+\newpage
+\setcounter{page}{1} \setcounter{section}{#5} \noindent
+\begin{center}
+\framebox{ \vbox{\vspace{2mm} \hbox to 6.28in { {\bf
+THU-70250043-0,~Pattern~Recognition~(Spring 2021) \hfill Homework: 6} }
+\vspace{6mm} \hbox to 6.28in { {\Large \hfill #1 \hfill} }
+\vspace{6mm} \hbox to 6.28in { {\it Lecturer: #2 \hfill} }
+\vspace{2mm} \hbox to 6.28in { {\it \hspace{14mm} #3 \hfill} }
+\vspace{2mm} \hbox to 6.28in { {\it Student: #4 \hfill} }
+\vspace{2mm} } }
+\end{center}
+\markboth{#1}{#1} \vspace*{4mm} }
+
+
+\begin{document}
+
+\homework{Metric and $k$-NN}{Changshui Zhang
+\hspace{5mm} {\tt zcs@mail.tsinghua.edu.cn}}{Hong Zhao
+\hspace{15mm} {\tt vzhao@tsinghua.edu.cn}}{ \hspace{5mm} {} }{0}
+
+\section{Property of Euclidean Distance}
+
+When the metric space is a finite-dimensional Euclidean space, please \textbf{prove} that the Voronoi cells induced by the single-nearest neighbor algorithm must always be convex. Does this property hold when the metric becomes Manhattan distance?
+
+In mathematics, a Voronoi diagram is a partition of a plane into regions close to each of a given set of objects. In the simplest case, 
+these objects are just finitely many points in the plane (called seeds, sites, or generators). 
+For each seed there is a corresponding region consisting of all points of the plane closer to that seed than to any other. 
+These regions are called Voronoi cells, as shown in Figure~\ref{pic1}. Similarly, Voronoi cells of a discrete set in higher-order Euclidean space are known as generalized polyhedra.
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.3]{Euclidean_Voronoi_diagram.pdf}
+	\caption{Voronoi cells with Euclidean distance, cited from \cite{pics}.}
+	\label{pic1}
+\end{figure}
+
+\emph{Hint: Convex means for any two points $x_1$ and $x_2$ in a cell, all points on the segment linking $x_1$ and $x_2$ must also lie in the cell.}
+
+\section{Properties of Metric}
+Please \textbf{prove} that the Minkowski metric indeed possesses the three properties required of all metrics.
+
+\emph{Hint: A metric $D(·, ·)$ must have three properties: for all vectors
+$a$, $b$ and $c$,
+\begin{enumerate}
+\item identity of indiscernibles: $D(a, b) = 0$ if and only if $a = b$.
+\item symmetry: $D(a, b) = D(b, a)$.
+\item triangle inequality: $D(a, b) + D(b, c) \ge D(a, c)$.
+\end{enumerate}}
+
+\section{$k$-NN Classifier}
+
+Let $\mathcal{D}=\{\bm{x}_1, \cdots, \bm{x}_n\}$ be a set of $n$ independent labelled samples and let $\mathcal{D}_k(\bm{x})=\{\bm{x}'_1, \cdots, \bm{x}'_k\}$ be the $k$ nearest neighbors of $\bm{x}$. Recall that the $k$-nearest-neighbor rule for classifying $\bm{x}$ is to give $\bm{x}$ the label most frequently represented in $\mathcal{D}_k(\bm{x})$. Consider a two-category problem with $P(\omega_1) = P(\omega_2) = 1/2$. Assume further that the conditional densities $p(x|\omega_i)$ are uniform within unit hyperspheres, and the two categories center on two points ten units apart. Figure \ref{pic2} shows a diagram of this situation.
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{diagram.png}
+	\caption{A diagram of assumed situation. When $k\ge7$, X is misclassified as there are only $3$ samples in $w_2$.}
+	\label{pic2}
+\end{figure}
+
+\begin{enumerate}
+    \item Show that if $k$ is odd, the average probability of error is given by
+\begin{equation}\nonumber
+    P_n(e) = \frac{1}{2^n}\sum_{j=0}^{(k-1)/2}{\left( \begin{matrix}n \\\ j \end{matrix} \right)}.
+\end{equation}
+    \item Show that for this case the single-nearest neighbor rule has a lower error rate than the $k$-nearest-neighbor error rate for $k>1$.
+    \item If $k$ is odd and is allowed to increase with $n$ but is restricted by $k < a\sqrt{n}$, where $a$ is a positive constant, show that $P_n(e) \to 0$ as $n \to \infty$.
+\end{enumerate}
+
+\section{Programming: $k$-NN Classifier on MNIST}
+Please implement $k$-NN classifier and run on MNIST\cite{mnist}.
+You need to follow the official train/test split of MNIST. Compare the performance with the following settings:
+% \footnote{http://yann.lecun.com/exdb/mnist/}.
+
+\begin{enumerate}
+	\item[-] Using 100, 300, 1000, 3000, 10000 training samples.
+	\item[-] Using different values of $k$.
+	\item[-] Using at least three different distance metrics.
+\end{enumerate}
+
+In this assignment, you are \emph{NOT} allowed to use any existing libraries or code snippets that provides $k$-NN algorithm.
+
+\section{Literature Reading}
+Please read the paper about metric learning. 
+
+\textbf{Distance metric learning with application to clustering with side-information}.\cite{metric_learning}
+
+\emph{Hint: You do not have to submit anything for this reading section.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Reference
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{thebibliography}{1}
+
+% \bibitem{BoydVandenberghe2004}
+% S. Boyd and L. Vandenberghe, \emph{Convex Optimization}, Cambridge
+% University Press, 2004.
+\bibitem{pics}
+File:Euclidean Voronoi diagram.svg. (2020, October 10). Wikimedia Commons, the free media repository. Retrieved 09:39, March 29, 2021 from 
+
+\url{https://commons.wikimedia.org/wiki/File:Euclidean_Voronoi_diagram.svg}
+
+\bibitem{mnist}
+LeCun Y. The MNIST database of handwritten digits[J]. \url{http://yann.lecun.com/exdb/mnist/}, 1998.
+
+\bibitem{metric_learning}
+Xing E P, Ng A Y, Jordan M I, et al. Distance metric learning with application to clustering with side-information[C]//NIPS. 2002, 15(505–512): 12.
+
+\end{thebibliography}
+\end{document}

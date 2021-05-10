@@ -1,0 +1,154 @@
+\documentclass[UTF-8]{ctexart}
+\usepackage{mathrsfs}
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{comment}
+% \usepackage{hyperref}
+\usepackage[colorlinks,linkcolor=blue]{hyperref}
+\usepackage{url}
+%\include{macros}
+%\usepackage{floatflt}
+%\usepackage{graphics}
+%\usepackage{epsfig}
+
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem*{defition}{Definition}
+\newtheorem*{example}{Example}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{note}{Note}
+\newtheorem*{exercise}{Exercise}
+
+\setlength{\oddsidemargin}{-0.25 in}
+\setlength{\evensidemargin}{-0.25 in}
+\setlength{\topmargin}{-0.25 in}
+\setlength{\textwidth}{7 in}
+\setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.25 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+\newcommand{\homework}[5]{
+\pagestyle{myheadings} \thispagestyle{plain}
+\newpage
+\setcounter{page}{1} \setcounter{section}{#5} \noindent
+\begin{center}
+\framebox{ \vbox{\vspace{2mm} \hbox to 6.28in { {\bf
+THU-70250043-0,~Pattern~Recognition~(Spring 2021) \hfill Homework: 10} }
+\vspace{6mm} \hbox to 6.28in { {\Large \hfill #1 \hfill} }
+\vspace{6mm} \hbox to 6.28in { {\it Lecturer: #2 \hfill} }
+\vspace{2mm} \hbox to 6.28in { {\it \hspace{15mm} #3 \hfill} }
+\vspace{2mm} \hbox to 6.28in { {\it Student: #4 \hfill} }
+\vspace{2mm} } }
+\end{center}
+\markboth{#1}{#1} \vspace*{4mm} }
+
+\begin{document}
+
+\homework{Dimensionality Reduction}
+{Changshui Zhang \hspace{5mm} {\tt zcs@mail.tsinghua.edu.cn}}
+{Hong Zhao \hspace{15mm} {\tt vzhao@tsinghua.edu.cn}}
+{\hspace{5mm} {\tt xxx@mails.tsinghua.edu.cn} }{0}
+
+\section*{PCA and eigenvectors}
+
+Let $\mathbf x_1, \mathbf x_2, \ldots, \mathbf x_n$ denote $n$ vectors in $\mathbb R^D$, and we know the mean vector $\mathbf{\bar x}=\frac{1}{n}\sum_{i=1}^n\mathbf x_i=\mathbf 0\in\mathbb R^D$.
+We project them into a lower dimensional space by performing a linear transformation:
+\begin{equation}
+\mathbf y_i=\mathbf W^T\mathbf x_i,
+\end{equation}
+where $\mathbf y_i\in\mathbb R^d$, $\mathbf W\in\mathbb R^{D\times d}$, and $\mathbf W^T\mathbf W=\mathbf I\in\mathbb R^{d\times d}$.
+To simplify notations, we stack $\mathbf x_i$ column by column to make a data matrix: $\mathbf X=[\mathbf x_1, \mathbf x_2, \ldots, \mathbf x_n]\in\mathbb R^{D\times n}$, and then perform the same operation on $\mathbf y_i$ to get $\mathbf Y\in\mathbb R^{d\times n}$.
+Then we can calculate the covariance matrix $\Sigma_{\mathbf X}=\mathbf X\mathbf X^T$, and $\Sigma_{\mathbf Y}=\mathbf Y\mathbf Y^T$.
+
+Please find the matrix $\mathbf W$ which maximizes the trace of $\Sigma_{\mathbf Y}$.
+
+This problem has a closed-form solution and thus numerical solutions will not be accepted. 
+
+
+\section*{MDS and strain}
+
+In MDS, we have the distance matrix $\mathbf D\in\mathbb R^{n\times n}$ for $n$ data points, where $\mathbf D_{i,j}=(\mathbf x_i-\mathbf x_j)^T(\mathbf x_i-\mathbf x_j)$.
+We first get the inner product matrix $\mathbf B$ by:
+\begin{equation}
+\mathbf B=-\frac{1}{2}\mathbf H\mathbf D\mathbf H,
+\end{equation}
+where $\mathbf H$ is defined as $\mathbf H=\mathbf I-\frac{1}{n}\mathbf 1\mathbf1^T$, $\mathbf 1=(1,1,\ldots,1)^T\in\mathbb R^{n\times 1}$ and $\mathbf I\in\mathbb R^{n\times n}$ is the identity matrix.
+Suppose the desired number of dimensions for output is $m$.
+\textcolor{blue}{In the next step of MDS we should find the $m$ largest eigenvalues values $\lambda_1, \lambda_2, \ldots, \lambda_m$ and corresponding eigenvectors $\mathbf u_1, \mathbf u_2, \ldots, \mathbf u_m\in\mathbb R^n$ of matrix $\mathbf B$ and the final output of MDS should be $\mathbf X=[\mathbf u_1, \mathbf u_2, \ldots, \mathbf u_m]\cdot\mathrm{diag}(\sqrt\lambda_1, \sqrt\lambda_2, \ldots, \sqrt\lambda_m)$.}
+
+Please prove that the procedure marked in \textcolor{blue}{blue} is equivalent to find $\mathbf X$ to minimize the strain, which is defined by:
+\begin{equation}
+\textrm{Strain}(\mathbf x_1,\mathbf x_2, \ldots, \mathbf x_n)=\sqrt{\frac{\sum_{i,j}\left(\mathbf B_{i,j} - \mathbf x_i^T\mathbf x_j\right)^2}{\sum_{i,j}\mathbf B_{i,j}}}.
+\end{equation}
+
+
+\section*{ISOMAP, LLE}\label{ISOMAP，LLE}
+\emph{ISOMAP, LLE 对流形的降维}
+
+考虑如下的问题并实现 ISOMAP，LLE 等降维方法：
+
+1 在三维空间中产生 “Z” 形状的流形，使用 ISOMAP 方法降维并作图，给出数据的三维分布图和最佳参数下的降维效果图。
+
+2 在三维空间中产生 “W” 形状的流形，使用 LLE 方法降维并作图，给出数据的三维分布图和最佳参数下的降维效果图。
+
+\emph{注意：数据在产生过程中可不必严格保证形状，大致符合要求即可。不用在数据的产生上花费过多时间。可以参考\href{https://scikit-learn.org/stable/auto_examples/manifold/plot_compare_methods.html\#sphx-glr-auto-examples-manifold-plot-compare-methods-py}{scikit-learn的官方文档}，实现类似的效果，但是不可以直接使用已有的LLE和ISOMAP函数。}
+
+
+\section*{Further Reading}
+
+\subsection*{Whitening with PCA and ZCA}
+
+``A whitening transformation or sphering transformation is a linear transformation that transforms a vector of random variables with a known covariance matrix into a set of new variables whose covariance is the identity matrix, meaning that they are uncorrelated and each have variance 1. The transformation is called `whitening' because it changes the input vector into a white noise vector.''\cite{whitening}
+
+Suppose we have $n$ $d$-dimensional data points stored in $\mathbf X \in \mathbb R^{n \times d}$. The covariance matrix is $C(\mathbf{X}) = \frac{1}{n} \mathbf{X}^{T} \mathbf{X}$ and a whitening transformation is $\mathbf{Y} = \mathbf{W} \mathbf{X}$ where $\mathbf{W} \in \mathbb R^{d \times d}$ is the whitening matrix and $\mathbf{Y}$ is the transformed data with $C(\mathbf{Y}) = \mathbf{I}$. 
+
+Theoretically, whitening transformation is not unique because a rotated whitening matrix $\mathbf{W_2} = \mathbf{R} \mathbf{W_1}$($\mathbf{R}$ is an orthogonal matrix) is also a whitening matrix. 
+
+Suppose the eigenvalue decomposition for $C(\mathbf{X})$ is given by $C(\mathbf{X}) = \mathbf{E} \mathbf{D} \mathbf{E}^T$ with eigenvectors in columns of $\mathbf{E}$ and eigenvalues on the diagonal of $\mathbf{D}$. For principal component analysis(PCA), the whitening matrix is calculated by $\mathbf{W}_{PCA} = \mathbf{D}^{-\frac{1}{2}} \mathbf{E}^T$. For zero-phase component analysis(ZCA), the whitening matrix is $\mathbf{W}_{ZCA} = \mathbf{E} \mathbf{D}^{-\frac{1}{2}} \mathbf{E}^T$.
+
+Multiplication by an orthogonal matrix can be seen as rotation and multiplication by a diagonal matrix can be seen as scaling. We can see that ZCA rotates the transformed vectors of PCA back to the original data space with the orthogonal matrix $\mathbf{E}$.
+
+In deep learning, we know that batch normalization(BN) is a powerful trick to accelerate and stabilize the training of deep models. BN simply performs standardization for input feature maps. However, it has been shown that batch whitening(transform the input feature maps with a whitening transformation) further improves BN's optimization efficiency and generalization ability\cite{batch_whitening}. In batch whitening, the ZCA whitening is much better than the PCA whitening, read the work\cite{batch_whitening} for further reference of why this happens.
+
+\emph{Optional:} Construct a toy example, calculate the PCA results and the ZCA results and compare them to illustrate why ZCA is preferred.
+
+
+\subsection*{Non-classical MDS}
+
+The classical derivation of MDS in the class assumed that the distance matrix is calculated by Euclidean distances of paired data points. However, in real applications, this matrix represents a set of dissimilarities which might not be Euclidean distances or not even distances at all. The MDS problem without the Euclidean assumption of distance matrix is called non-classical MDS. This is a generalization of the classical MDS and implemented as default MDS algorithm in Python library \href{https://scikit-learn.org/stable/modules/manifold.html#multidimensional-scaling}{scikit-learn}. Read the book\cite{MDS} for solutions in this situation.
+
+In addition, there is a more general form of MDS algorithm called non-metric MDS which aims to preserve the \emph{rank-order} of the distances in the embedding space rather than their \emph{values}. You can also find solutions for non-metric MDS in the same book\cite{MDS} if you are interested.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Reference
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{thebibliography}{1}
+
+\bibitem{whitening}
+
+Wikipedia contributors. "Whitening transformation." Wikipedia, The Free Encyclopedia. Wikipedia, The Free Encyclopedia, 15 Dec. 2020. Web. 27 Apr. 2021. 
+
+\bibitem{batch_whitening}
+
+Huang L, Yang D, Lang B, et al. Decorrelated batch normalization[C]//Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2018: 791-800.
+
+\bibitem{MDS}
+
+Boyarski A., Bronstein A. (2020) Multidimensional Scaling. In: Ikeuchi K. (eds) Computer Vision. Springer, Cham. 
+
+\end{thebibliography}
+
+\end{document}

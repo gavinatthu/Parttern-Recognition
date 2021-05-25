@@ -1,0 +1,240 @@
+\documentclass{article}
+\usepackage{mathrsfs}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{color}
+
+\usepackage{courier}
+% \usepackage[latin9]{inputenc}
+\usepackage[letterpaper]{geometry}
+\geometry{verbose}
+\usepackage{url}
+\usepackage{algorithm2e}
+%\include{macros}
+%\usepackage{floatflt}
+%\usepackage{graphics}
+%\usepackage{epsfig}
+
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem*{defition}{Definition}
+\newtheorem*{example}{Example}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{note}{Note}
+\newtheorem*{exercise}{Exercise}
+
+\setlength{\oddsidemargin}{-0.25 in}
+\setlength{\evensidemargin}{-0.25 in} \setlength{\topmargin}{-0.25
+in} \setlength{\textwidth}{7 in} \setlength{\textheight}{8.5 in}
+\setlength{\headsep}{0.25 in} \setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+\newcommand{\homework}[5]{
+\pagestyle{myheadings} \thispagestyle{plain}
+\newpage
+\setcounter{page}{1} \setcounter{section}{#5} \noindent
+\begin{center}
+\framebox{ \vbox{\vspace{2mm} \hbox to 6.28in { {\bf
+THU-70250043,~Pattern~Recognition~(Spring 2021) \hfill Homework: 12} }
+\vspace{6mm} \hbox to 6.28in { {\Large \hfill #1 \hfill} }
+\vspace{6mm} \hbox to 6.28in { {\it Lecturer: #2 \hfill} }
+\vspace{2mm} \hbox to 6.28in { {\it \hspace{15mm} #3 \hfill} }
+\vspace{2mm} \hbox to 6.28in { {\it Student: #4 \hfill} }
+\vspace{2mm} } }
+\end{center}
+\markboth{#1}{#1} \vspace*{4mm} }
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\begin{document}
+\global\long\def\reals{\mathbf{R}}
+\global\long\def\cf{\mathcal{F}}
+\global\long\def\cy{\mathcal{Y}}
+ 
+\homework{Ensemble}{Changshui Zhang \hspace{5mm} {\tt zcs@mail.tsinghua.edu.cn}}
+{Hong Zhao \hspace{15mm} {\tt vzhao@tsinghua.edu.cn}}
+{\hspace{5mm} {} }{0}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Section 2.  Problem
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Problem 1: Bagging}\label{problem:1}
+% \emph{bagging}
+
+In practice, we have only a single data set, and \emph{bagging} is a method to introduce variability between different models within the committee based on one data set.
+
+The very first step is to use \emph{bootstrap} data sets. After we have generated $M$ bootstrap data sets, we then use each to train a separate predictive model $y_{m}$ where $m = 1, ..., M.$ Then the prediction is given by:
+\begin{eqnarray}
+y_{COM}=\frac{1}{M}\sum_{m=1}^{M}y_{m}(\bold{x}).
+\end{eqnarray}
+
+\emph{Hint: A committee can be viewed as a set of individual models on which we average our predictions.}
+
+Suppose the true regression function that we are trying to predict is given by $h(\bold{x})$, so that the output of each of the models can be written as the true value plus an error in the form:
+\begin{eqnarray}
+y_{m}(\bold{x})=h(\bold{x})+\epsilon_{m}(\bold{x}).
+\end{eqnarray}
+The average sum-of-square error then takes the form:
+\begin{eqnarray}
+\mathbb{E}_{\bold{x}}[\{y_{m}(\bold{x})-h(\bold{x})\}^{2}]=\mathbb{E}_{\bold{x}}[\epsilon_{m}(\bold{x})^{2}] ,
+\end{eqnarray}
+where $\mathbb{E}_{\bold{x}}$ denotes expectation with respect to the distribution of the input vector $\bold{x}$.
+
+The average error made by the models acting individually is therefore:
+\begin{eqnarray}
+E_{AV}=\frac{1}{M}\sum_{m=1}^{M}\mathbb{E}_{\bold{x}}[\epsilon_{m}(\bold{x})^{2}].
+\end{eqnarray}
+
+Similarly, the expected error from equation (1) is given by:
+\begin{eqnarray}
+E_{COM}=&\mathbb{E}_{\bold{x}}[\{\frac{1}{M}\sum_{m=1}^{M}y_{m}(\bold{x})-h(\bold{x})\}^{2}] \\
+=&\mathbb{E}_{\bold{x}}[\{\frac{1}{M}\sum_{m=1}^{M}\epsilon_{m}(\bold{x})\}^{2}].\qquad\quad
+\end{eqnarray}
+1.1 Assume that errors have zero mean and are uncorrelated:
+\begin{eqnarray}
+\mathbb{E}_{\bold{x}}[\epsilon_{m}(\bold{x})]=&0,& \\
+\mathbb{E}_{\bold{x}}[\epsilon_{m}(\bold{x})\epsilon_{l}(\bold{x})]=&0,& \qquad m\neq l.
+\end{eqnarray}
+Please prove that:
+\begin{eqnarray}
+E_{COM}=\frac{1}{M}E_{AV}.
+\end{eqnarray}
+
+1.2 In practice, the errors are typically highly correlated. Show that the following inequality holds without assumptions in 1.1:
+\begin{eqnarray}
+E_{COM}\leq E_{AV}.
+\end{eqnarray}
+
+1.3 In the previous problem, our error function is $f(y(\bold{x})-h(\bold{x}))=(y(\bold{x})-h(\bold{x}))^{2}$(sum-of-square). By making use of \emph{Jensen's inequality}, show that equation (10) holds for any error function $E(y(\bold{x})-h(\bold{x}))$ provided it is a convex function of $y(\bold{x})-h(\bold{x})$.
+
+1.4 Consider the case in which we allow unequal weighting of the individual models:
+\begin{eqnarray}
+y_{COM}(\bold{x})=\sum_{m=1}^{M}\alpha_{m}y_{m}(\bold{x}).
+\end{eqnarray}
+In order to make $y_{COM}(\bold{x})$ sensible, we require that for ${\forall} y_{m}(\bold{x})$ they are bounded at each value of $\bold{x}$ like:
+\begin{eqnarray}
+y_{min}(\bold{x})\leq y_{COM}(\bold{x})\leq y_{max}(\bold{x}).
+\end{eqnarray}
+Show that the necessary and sufficient condition for constraint (12) is:
+\begin{eqnarray}
+\alpha_{m}\geq 0, \qquad \qquad \sum_{m=1}^{M}\alpha_{m}=1.
+\end{eqnarray}
+
+\section*{Problem 2: Gradient Boosting}\label{problem:2}
+% \emph{Gradient Boosting}
+
+Gradient boosting is a generation of boosting algorithms, using the connection between boosting and optimization. 
+For the boosting part, it builds an additive model in a forward stage-wise fashion. For the optimization part, it allows for the optimization of arbitrary differentiable loss functions by using their gradients.
+
+In any function estimation problem, we wish to find a regression function $f(x) \in \cf$ that minimizes the expectation of some loss function, where $f(x)$ is a function that maps from the input space to $\reals$, and $\cf$ is the hypothesis space of all possible regression functions.
+
+Denote a given loss function as $\ell$.
+The Gradient Boosting algorithm contains $M$ steps. At each step, it tries to build a regression functions $h_m(x)$ and adds it to the ensembled function $f_m(x)$ to minimize $\ell$. In the end all functions of $M$ steps add up to form the final regression function $f_M(x)$. The details are described as follows. 
+
+\begin{enumerate}
+\item Initialize $f_{0}(x)=0$. 
+\item For $m=1$ to $M$:
+
+\begin{enumerate}
+\item Compute the gradient: 
+\[
+({\bf g}_{m})_i=\left.\frac{\partial}{\partial f(x_{i})}\ell\left( y_{i},f(x_{i})\right) \right|_{f(x_{i})=f_{m-1}(x_{i})} ,
+\]
+
+where $\{y_i, x_i\}_{1}^{n}$ are $n$ data samples.
+\item The negative gradient $-{\bf g}_{m}$ is said to define the "steepest-descent" direction. Thus we could use the negative gradient as the working response and fit regression model to $-{\bf g}_{m}$: 
+\[
+h_{m}=\argmin_{h\in\cf}\sum_{i=1}^{n}\left(\left(-{\bf g}_{m}\right)_{i}-h(x_{i})\right)^{2},
+\]
+
+each $h_m \in \cf$ is chosen in a learning process.
+
+\item Choose fixed step size $\nu_{m}=\nu\in(0,1]$, or take 
+\[
+\nu_{m}=\argmin_{\nu>0}\sum_{i=1}^{n}\ell\left( y_{i},f_{m-1}(x_{i})+\nu h_{m}(x_{i})\right) ,
+\]
+
+where $\nu_{m}$ is the size of the step along the direction of greatest descent.
+
+\item Update the estimate of $f(x)$ as: 
+\[
+f_{m}(x)=f_{m-1}(x)+\nu_{m}h_{m}(x).
+\]
+
+\end{enumerate}
+\item Return $f_{M}$. 
+\end{enumerate}
+In this problem we'll derive two special cases of the general gradient
+boosting framework: $L_{2}$-Boosting and BinomialBoost. 
+
+2.1 Consider the regression framework, where label space $\cy=\reals$. Suppose our
+loss function is given by 
+\[
+\ell(\hat{y},y)=\frac{1}{2}\left(\hat{y}-y\right)^{2},
+\]
+and at the beginning of the $m$'th round of gradient boosting, we
+have the function $f_{m-1}(x)$. Show that the $h_{m}$ chosen as
+the next basis function is given by 
+\[
+h_{m}=\argmin_{h\in\cf}\sum_{i=1}^{n}\left[\left(y_{i}-f_{m-1}(x_{i})\right)-h(x_{i})\right]^{2}.
+\]
+In other words, at each stage we find the weak prediction function
+$h_{m}\in\cf$ that is the best fit to the residuals from the previous
+stage. 
+
+\emph{Hint: Once you understand what's going on, this is a pretty
+easy problem.}
+
+2.2 Now let's consider the classification framework, where $\cy=\left\{ -1,1\right\} $. This time, let's consider the logistic loss 
+\[
+\ell(m)=\ln\left(1+e^{-m}\right),
+\]
+where $m=yf(x)$ is the margin. Similar to what we did in the $L_{2}$-Boosting
+question, write an expression for $h_{m}$ as an argmin over $\cf$. 
+
+(Optional) 2.3 What are the similarities and differences between Gradient Boosting and Gradient Descent?
+
+
+\section*{Problem 3: Adaboost Programming}\label{problem:3}
+% \emph{Adaboost Programming}
+
+The goal of this problem is to give you an overview of the procedure of \emph{Adaboost}.
+
+Here, our "weak learners" are \emph{decision stumps}. Our data consist of $X \in \mathbb{R}^{n\times p}$ matrix with each row a sample and label vector $y\in\{-1, +1\}^{n}$. A decision stump is defined by:
+\begin{displaymath}
+h_{(a,d,j)}(\bold{x})= \left\{\begin{array}{ll}
+d, & if\ x_{j}\leq a, \\
+-d, & otherwise,
+\end{array} \right.
+\end{displaymath}
+
+where $a\in \mathbb{R}$, $j\in \{1, ..., p\}$, $d\in \{-1, +1\}$. Here $\bold{x}\in \mathbb{R}^{p}$ is a vector, and $x_{j}$ is the $j$-th coordinate.
+
+Directory of the data is \emph{$/code/ada\_data.mat$}. It contains both a training and testing set of data. Each consists of 1000 examples. There are 25 real valued features for each example, and a corresponding $y$ label.
+
+3.1 Complete the code skeleton $\bold{decision\_stump.m}$ (or $\bold{decision\_stump()}$ in adaboost.py if you use python). This program takes as input: the data along with a set of weights (i.e., $\{(\bold{x}_{i}, y_{i}, w_{i})\}_{i=1}^{n}$, where $w_{i} \geq 0$ and $\sum_{i=1}^{n}w_{i}=1$), and returns the decision stump which minimizes the weighted training error. Note that this requires selecting both the optimal $a$, $d$ of the stump, and also the optimal coordinate $j$.
+
+The output should be a pair $(a^{\star}, d^{\star}, j^{\star})$ with:
+\begin{eqnarray}
+l(a^{\star}, d^{\star}, j^{\star})=min_{a, d, j}l(a, d, j)=min_{a, d, j}\sum_{i=1}^{n}w_{i}1\{h_{a, d, j}(\bold{x}_{i})\neq y_{i}\}.
+\end{eqnarray}
+Your approach should run in time $O(pn\ log\ n)$ or better. Include details of your algorithm in the report and analyze its running time.
+
+\emph{Hint: you may need to use the function $\bold{sort}$ provided by matlab or python in your code, we can assume its running time to be $O(m log m)$ when considering a list of length m.}
+
+3.2 Complete the other two code skeletons $\bold{update\_weights.m}$ and $\bold{adaboost\_error.m}$. Then run the $\bold{adaboost.m}$, you will carry out adaboost using decision stumps as the "weak learners". (Complete the code in $\bold{adaboost.py}$ if you use python)
+
+3.3 Run your AdaBoost loop for 300 iterations on the data set, then plot the training error and testing error with iteration number as the x-axis.
+
+\end{document}
+
+
